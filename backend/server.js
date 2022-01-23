@@ -59,7 +59,23 @@ app.put("/todos/:id", (req,res)=>{
     )
 })
 // Edit to status of completed
-app.put('status')
+app.put("/todos/:id/:isCompleted", (req,res)=>{
+    Todo.updateOne(
+        {_id: req.params.id},
+        {isCompleted:req.params.isCompleted},
+        (err,updateObj)=>{
+            if(err){
+                console.log(`Error: ${err}`)
+                res.status(400).json(err)
+            }else{
+                console.log(updateObj)
+                updateObj.matchedCount === 1
+                ?res.json('update status of todo')
+                :res.status(404).json("This todo is not found")
+            }
+        }
+    )
+})
 
 app.delete("/todos/:id", (req,res)=>{
     Todo.deleteOne({_id:req.params.id},(err, deleteObj)=>{
@@ -72,9 +88,9 @@ app.delete("/todos/:id", (req,res)=>{
         }
     })
 })
-// delete all incomplete tasks
+// delete all complete tasks
 app.delete("/delete_complete",(req,res)=>{
-    Todo.deleteMany({Completed:true},(err, deleteObj)=>
+    Todo.deleteMany({isCompleted:true},(err, deleteObj)=>
     {
         if(err){
             console.log(`Error: ${err}`)
